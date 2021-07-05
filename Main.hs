@@ -3,8 +3,10 @@ import Text.Printf ( printf )
 import NeuralNetwork ( Activation(..) )
 import Optimization ( Optimizer(..), train )
 import Dynamic ( buildNetwork )
+import Evaluation ( hits )
 
 -- | Experiment example
+
 experiment :: IO ()
 experiment = do
 
@@ -14,19 +16,22 @@ experiment = do
 
     -- provision of initial net
     let inputFeatures = 4
-    let layers = [128, 3]
-    let activations = [Relu, Sigmoid]
+        layers = [128, 3]
+        activations = [Relu, Sigmoid]
+    
     net <- buildNetwork inputFeatures layers activations
 
-    -- provision of optmizer
+    -- provision of train parameters
     let learningRate = 0.001
-    let optimizer = GradientDescent learningRate
+        optimizer = GradientDescent learningRate
+        epochs = 7000
+        
+        trainedNet = train net optimizer (samples, targets) epochs
 
-    -- provision of training parameters
-    let epochs = 7000
+    let correct = hits trainedNet (samples, targets)
 
     putStrLn "Finished experiment"
-
+    putStrLn $ printf "Hits for net (gradient descent) %.2f" (correct)
 
 main = experiment
 
