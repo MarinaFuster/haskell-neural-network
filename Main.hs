@@ -8,6 +8,7 @@ experiment :: IO ()
 experiment = do
 
     -- provision of dataset
+    -- | TODO: this should be dataset for reproducible results
     (samples, targets) <- makeCircles 3 0.6 0.1
 
     -- provision of initial net
@@ -28,3 +29,7 @@ experiment = do
 
 
 main = experiment
+
+
+-- | TODO: figure out a way to compute time properly and compare it
+-- | to python way of doing it ??

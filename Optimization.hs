@@ -17,4 +17,5 @@ optimize :: NeuralNetwork               -- network to train
     -> Int                              -- epochs
     -> NeuralNetwork                    -- resulting neural network
 
+-- | TODO: complete this function
 optimize = undefined

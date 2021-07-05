@@ -48,7 +48,12 @@ applyDerivative Relu = \x dY -> reluGradient x * dY
 applyDerivative Tanh = \x dY -> tanhGradient x * dY
 
 compute :: Error -> Matrix Double -> Matrix Double -> Matrix Double
-compute MSE = \x y -> 0.5 `scale` (cmap (^ 2) (x - y))  
+-- | TODO: test
+-- sumElements will return a single value instead of MSE for each sample
+compute MSE = \x y -> sumElements $ 0.5 `scale` (cmap (^ 2) (x - y))  
 
 computeDerivative :: Error -> Matrix Double -> Matrix Double -> Matrix Double
+-- | TODO: test
 computeDerivative MSE = \x y -> x - y
+
+-- | TODO: recursive function for backprop and feedforward
