@@ -7,7 +7,9 @@ module NeuralNetwork (
     DB (..),
     Layer (..),
     Gradients (..),
-    NeuralNetwork (..)
+    NeuralNetwork (..),
+    backprop,
+    forward
 ) where      -- here everything is exported
 
 import Numeric.LinearAlgebra as LA
