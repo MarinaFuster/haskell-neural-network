@@ -9,7 +9,7 @@ module NeuralNetwork (
     Gradients (..),
     NeuralNetwork (..),
     backprop,
-    forward
+    feedforward
 ) where      -- here everything is exported
 
 import Numeric.LinearAlgebra as LA
@@ -24,8 +24,8 @@ import Numeric.Morpheus.Activation (
 
 -- | Neural Network data types
 
-data Activation = Relu | Tanh | Sigmoid     -- Activation :: matrix double -> matrix double
-data Error = MSE                            -- Error :: samples -> targets -> matrix double
+data Activation = Relu | Tanh | Sigmoid
+data Error = MSE
 
 type Weights = Matrix Double    -- layer weights
 type Biases = Matrix Double     -- layer biases
@@ -57,17 +57,17 @@ computeDerivative MSE = \x y -> x - y
 
 -- | Backpropagation and Feed Forward algorithms
 
-pass :: 
+propagate :: 
   Matrix Double ->                            -- targets
   Matrix Double ->                            -- inputs
   NeuralNetwork ->                            -- layers
   (Matrix Double, Matrix Double, [Gradients]) -- (dX, predictions, list of gradients)
 
-pass t inp [] = computeLoss t inp
-pass t inp (Layer w b a:xs) = (dX, preds, gradient:gradients)
+propagate t inp [] = computeLoss t inp
+propagate t inp (Layer w b a:xs) = (dX, preds, gradient:gradients)
   where
     h = getH inp w b
-    (dZ, preds, gradients) = pass t (apply a h) xs
+    (dZ, preds, gradients) = propagate t (apply a h) xs
     (dX, gradient) = computeGradients inp h dZ (Layer w b a)
 
 backprop :: 
@@ -75,16 +75,16 @@ backprop ::
   (Matrix Double, Matrix Double) ->   -- (samples, targets)
   (Matrix Double, [Gradients])        -- (predictions, list of gradients)
 
-backprop net (samples, targets) = dropFirst $ pass targets samples net 
+backprop net (samples, targets) = dropFirst $ propagate targets samples net 
 
-forward ::
+feedforward ::
   NeuralNetwork ->      -- nn
   Matrix Double ->      -- samples
   Matrix Double         -- predictions
 
-forward net samples = fst $ backprop net (samples, undefined) 
+feedforward net samples = fst $ backprop net (samples, undefined) 
 
--- | Util functions
+-- | Auxiliary functions
 
 computeLoss :: Matrix Double -> Matrix Double -> (Matrix Double, Matrix Double, [Gradients])
 computeLoss t inp = (computeDerivative MSE inp t, inp, [])

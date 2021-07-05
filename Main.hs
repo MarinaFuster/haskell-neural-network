@@ -1,6 +1,6 @@
 import Numeric.LinearAlgebra ( loadMatrix, takeRows )
 import Text.Printf ( printf )
-import NeuralNetwork ( Activation(..), forward )
+import NeuralNetwork ( Activation(..), feedforward )
 import Optimization ( Optimizer(..), train )
 import Dynamic ( buildNetwork )
 import Evaluation ( hits, classify )
@@ -29,7 +29,7 @@ experiment = do
         trainedNet = train net optimizer (samples, targets) epochs
 
 
-    print $ takeRows 10 (forward trainedNet samples)
+    print $ takeRows 10 (feedforward trainedNet samples)
     print $ takeRows 10 (classify trainedNet samples)
 
     --let correct = hits trainedNet (samples, targets)
