@@ -62,7 +62,7 @@ applyDerivative Relu = \x dY -> reluGradient x * dY
 applyDerivative Tanh = \x dY -> tanhGradient x * dY
 
 compute :: Error -> Matrix Double -> Matrix Double -> Matrix Double
-compute MSE = \x y -> 0.5 `scale` cmap (^ 2) (x - y)  
+compute MSE = \x y -> 0.5 `scale` (cmap (^ 2) (x - y))  
 
 computeDerivative :: Error -> Matrix Double -> Matrix Double -> Matrix Double
 computeDerivative MSE = \x y -> x - y
