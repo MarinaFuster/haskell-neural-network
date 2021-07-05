@@ -1,11 +1,30 @@
-import Numeric.LinearAlgebra
 import Text.Printf ( printf )
-import NeuralNetwork
+import NeuralNetwork ( Activation(..) )
+import Optimization ( GDParameters(..), Optimizer(..) )
+import Dynamic ( makeCircles, buildNetwork )
 
-program = do
+-- | Experiment example
+experiment :: IO ()
+experiment = do
 
-    net <- buildNetwork 2 [128, 1] [Relu, Sigmoid]
-    putStrLn "Network build"
+    -- provision of dataset
+    (samples, targets) <- makeCircles 3 0.6 0.1
+
+    -- provision of initial net
+    let inputFeatures = 2
+    let layers = [2, 1]
+    let activations = [Relu, Sigmoid]
+    net <- buildNetwork inputFeatures layers activations
+
+    -- provision of optmizer
+    let learningRate = 0.001
+    let gdParameters = GDParameters learningRate
+    let optimizer = GradientDescent gdParameters
+
+    -- provision of training parameters
+    let epochs = 2000
+
+    putStrLn "Finished experiment"
 
 
-main = program
+main = experiment

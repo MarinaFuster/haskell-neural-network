@@ -1,14 +1,20 @@
-data Parameters a = GDParameters a 
-    | BGDParameters a
-    | AParameters a
+module Optimization (
+    GDParameters (..),
+    Optimizer (..),
+    optimize
+) where
 
-data Optimizer = GradientDescent Parameters
-    | BatchGradientDescent Parameters 
-    | Adam Parameters
+import Numeric.LinearAlgebra
+import NeuralNetwork ( NeuralNetwork(..) )
 
-optimize :: NeuralNetowrk               -- network to train
+type LearningRate = Double
+data GDParameters = GDParameters LearningRate
+data Optimizer = GradientDescent GDParameters
+
+optimize :: NeuralNetwork               -- network to train
     -> Optimizer                        -- optimizer to use
-    -> Parameters                       -- parameters for that optimizer
     -> (Matrix Double, Matrix Double)   -- (samples, targets)
     -> Int                              -- epochs
-    -> NeuralNetowrk                    -- resulting neural network
+    -> NeuralNetwork                    -- resulting neural network
+
+optimize = undefined
