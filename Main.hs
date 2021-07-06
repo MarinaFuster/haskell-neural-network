@@ -29,7 +29,7 @@ experimentTemplate = do
         optimizer = GradientDescent learningRate -- PARAM: optimizer for your nn
         epochs = 7000                            -- PARAM: for how many epochs will the nn train
         
-        trainedNet = train net optimizer (samples, targets) epochs
+        trainedNet = train net (samples, targets) epochs optimizer
 
     print $ takeRows 10 (feedforward trainedNet samples)
     print $ takeRows 10 (classify trainedNet samples)
@@ -64,8 +64,10 @@ adamVsGradientDescent = do
         
         epochs = 800                          
         
-        gradientNet = train net gdOptimizer (samples, targets) epochs
-        adamNet = train net adamOptimizer (samples, targets) epochs
+        trainable = train net (samples, targets) epochs
+
+        gradientNet = trainable gdOptimizer
+        adamNet = trainable adamOptimizer
 
     print $ takeRows 10 (feedforward gradientNet samples)
     print $ takeRows 10 (feedforward adamNet samples)    

@@ -15,20 +15,20 @@ data AParameters = AParameters Beta Beta Epsilon Double
 data Optimizer = GradientDescent LearningRate | Adam AParameters
 
 train :: NeuralNetwork               -- network to train
-    -> Optimizer                        -- optimizer to use
     -> (Matrix Double, Matrix Double)   -- (samples, targets)
     -> Int                              -- epochs
+    -> Optimizer                        -- optimizer to use
     -> NeuralNetwork                    -- resulting neural network
 
 -- | Optimizers' train definitions
 
-train net0 (GradientDescent lr) dataset epochs = last $ take epochs (iterate step net0)
+train net0 dataset epochs (GradientDescent lr) = last $ take epochs (iterate step net0)
     where
         step net = zipWith (update lr) net gradients
           where
             (_, gradients) = backprop net dataset
 
-train net0 (Adam params) dataset epochs = net
+train net0 dataset epochs (Adam params) = net
   where
     s0 = initializeAtZero net0
     v0 = initializeAtZero net0
@@ -58,8 +58,8 @@ _adam (AParameters beta1 beta2 epsilon lr) iterN (w0, s0, v0) dataSet = last $ t
       where
         (_, dW) = backprop w dataSet -- we compute gradients at each iteration with mini batch
 
-        sN = zipWith f2 s dW
-        vN = zipWith f3 v dW
+        sN = zipWith rmsprop s dW
+        vN = zipWith momentumEstimation v dW
         wN = zipWith3 f w vN sN
 
         f :: Layer
@@ -73,16 +73,16 @@ _adam (AParameters beta1 beta2 epsilon lr) iterN (w0, s0, v0) dataSet = last $ t
 
         addC m c = cmap (+ c) m
 
-        f2 :: (Matrix Double, Matrix Double)
+        rmsprop :: (Matrix Double, Matrix Double)
            -> Gradients
            -> (Matrix Double, Matrix Double)
-        f2 (sW, sB) (Gradients dW dB) =
+        rmsprop (sW, sB) (Gradients dW dB) =
           ( beta2 `scale` sW + (1 - beta2) `scale` (dW^2)
           , beta2 `scale` sB + (1 - beta2) `scale` (dB^2))
 
-        f3 :: (Matrix Double, Matrix Double)
+        momentumEstimation :: (Matrix Double, Matrix Double)
            -> Gradients
            -> (Matrix Double, Matrix Double)
-        f3 (vW, vB) (Gradients dW dB) =
+        momentumEstimation (vW, vB) (Gradients dW dB) =
           ( beta1 `scale` vW + (1 - beta1) `scale` dW
           , beta1 `scale` vB + (1 - beta1) `scale` dB)
