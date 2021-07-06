@@ -57,37 +57,40 @@ computeDerivative MSE = \x y -> x - y
 
 -- | Backpropagation and Feed Forward algorithms
 
-propagate :: 
+propagate ::
+  Error ->                                    -- error/cost function
   Matrix Double ->                            -- targets
   Matrix Double ->                            -- inputs
   NeuralNetwork ->                            -- layers
   (Matrix Double, Matrix Double, [Gradients]) -- (dX, predictions, list of gradients)
 
-propagate t inp [] = computeLoss t inp
-propagate t inp (Layer w b a:xs) = (dX, preds, gradient:gradients)
+propagate err t inp [] = computeLoss err t inp
+propagate err t inp (Layer w b a:xs) = (dX, preds, gradient:gradients)
   where
     h = getH inp w b
-    (dZ, preds, gradients) = propagate t (apply a h) xs
+    (dZ, preds, gradients) = propagate err t (apply a h) xs
     (dX, gradient) = computeGradients inp h dZ (Layer w b a)
 
-backprop :: 
+backprop ::
+  Error ->                            -- error function
   NeuralNetwork ->                    -- nn
   (Matrix Double, Matrix Double) ->   -- (samples, targets)
   (Matrix Double, [Gradients])        -- (predictions, list of gradients)
 
-backprop net (samples, targets) = dropFirst $ propagate targets samples net 
+backprop err net (samples, targets) = dropFirst $ propagate err targets samples net 
 
 feedforward ::
   NeuralNetwork ->      -- nn
   Matrix Double ->      -- samples
   Matrix Double         -- predictions
 
-feedforward net samples = fst $ backprop net (samples, undefined) 
+-- we use undefined for both targets and error function (we won't need them)
+feedforward net samples = fst $ backprop undefined net (samples, undefined) 
 
 -- | Auxiliary functions
 
-computeLoss :: Matrix Double -> Matrix Double -> (Matrix Double, Matrix Double, [Gradients])
-computeLoss t inp = (computeDerivative MSE inp t, inp, [])
+computeLoss :: Error -> Matrix Double -> Matrix Double -> (Matrix Double, Matrix Double, [Gradients])
+computeLoss err t inp = (computeDerivative err inp t, inp, [])
 
 getH :: Matrix Double -> Matrix Double -> Matrix Double -> Matrix Double
 getH inp w b = (inp LA.<> w) + b

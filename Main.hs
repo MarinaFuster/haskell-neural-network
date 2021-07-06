@@ -1,6 +1,6 @@
 import Numeric.LinearAlgebra ( loadMatrix, takeRows )
 import Text.Printf ( printf )
-import NeuralNetwork ( Activation(..), feedforward )
+import NeuralNetwork ( Activation(..), Error (..), feedforward )
 import Optimization ( AParameters (..), Optimizer(..), train )
 import Dynamic ( buildNetwork )
 import Evaluation ( binaryClassify, binaryHits, binaryAccuracy )
@@ -27,9 +27,10 @@ experimentTemplate = do
 
     let learningRate = 0.001                     -- PARAM: learning rate for your optimizer
         optimizer = GradientDescent learningRate -- PARAM: optimizer for your nn
+        errFunc = MSE                            -- PARAM: error function to minimize
         epochs = 7000                            -- PARAM: for how many epochs will the nn train
         
-        trainedNet = train net (samples, targets) epochs optimizer
+        trainedNet = train net errFunc (samples, targets) epochs optimizer
 
     print $ takeRows 10 (feedforward trainedNet samples)
 
@@ -61,9 +62,10 @@ adamVsGradientDescent = do
         adamParams = AParameters beta1 beta2 epsilon lr
         adamOptimizer = Adam adamParams            -- adam optimizer
         
-        epochs = 800                          
+        epochs = 800
+        errFunc = MSE          
         
-        trainable = train net (samples, targets) epochs
+        trainable = train net errFunc (samples, targets) epochs
 
         gradientNet = trainable gdOptimizer
         adamNet = trainable adamOptimizer
