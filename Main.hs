@@ -3,7 +3,7 @@ import Text.Printf ( printf )
 import NeuralNetwork ( Activation(..), feedforward )
 import Optimization ( AParameters (..), Optimizer(..), train )
 import Dynamic ( buildNetwork )
-import Evaluation ( hits, classify )
+import Evaluation ( binaryClassify, binaryHits, binaryAccuracy )
 
 -- | Experiment example
 
@@ -32,7 +32,6 @@ experimentTemplate = do
         trainedNet = train net (samples, targets) epochs optimizer
 
     print $ takeRows 10 (feedforward trainedNet samples)
-    print $ takeRows 10 (classify trainedNet samples)
 
 adamVsGradientDescent :: IO ()
 adamVsGradientDescent = do
@@ -70,7 +69,7 @@ adamVsGradientDescent = do
         adamNet = trainable adamOptimizer
 
     print $ takeRows 10 (feedforward gradientNet samples)
-    print $ takeRows 10 (feedforward adamNet samples)    
+    print $ takeRows 10 (feedforward adamNet samples)
 
 
 main = adamVsGradientDescent
