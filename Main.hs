@@ -53,9 +53,15 @@ adamVsGradientDescent = do
     -- provision of train parameters
 
     let learningRate = 0.001                     
-        gdOptimizer = GradientDescent learningRate
-        adamParams = AParameters { _beta1 = 0.9, _beta2 = 0.999, _epsilon = 1e-8, _lr = 0.001 }
-        adamOptimizer = Adam adamParams
+        gdOptimizer = GradientDescent learningRate -- gradient descent optimizer
+        
+        beta1 = 0.9
+        beta2 = 0.999
+        epsilon = 1e-8
+        lr = 0.001
+        adamParams = AParameters beta1 beta2 epsilon lr
+        adamOptimizer = Adam adamParams            -- adam optimizer
+        
         epochs = 800                          
         
         gradientNet = train net gdOptimizer (samples, targets) epochs

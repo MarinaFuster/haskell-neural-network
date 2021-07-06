@@ -8,13 +8,10 @@ import Numeric.LinearAlgebra
 import NeuralNetwork ( NeuralNetwork(..), Layer(..), Gradients(..), backprop )
 
 type LearningRate = Double
-data AParameters = AParameters {
-    _beta1 :: Double,
-    _beta2 :: Double,
-    _epsilon :: Double,
-    _lr :: Double
-}
+type Beta = Double
+type Epsilon = Double
 
+data AParameters = AParameters Beta Beta Epsilon Double
 data Optimizer = GradientDescent LearningRate | Adam AParameters
 
 train :: NeuralNetwork               -- network to train
@@ -55,11 +52,7 @@ _adam :: AParameters
     -> ([Layer], [(Matrix Double, Matrix Double)], [(Matrix Double, Matrix Double)])
     -> (Matrix Double, Matrix Double)
     -> ([Layer], [(Matrix Double, Matrix Double)], [(Matrix Double, Matrix Double)])
-_adam p@AParameters { _lr = lr
-                       , _beta1 = beta1
-                       , _beta2 = beta2
-                       , _epsilon = epsilon
-      } iterN (w0, s0, v0) dataSet = last $ take iterN (iterate step (w0, s0, v0))
+_adam (AParameters beta1 beta2 epsilon lr) iterN (w0, s0, v0) dataSet = last $ take iterN (iterate step (w0, s0, v0))
   where
     step (w, s, v) = (wN, sN, vN)
       where
