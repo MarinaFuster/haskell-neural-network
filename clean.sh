@@ -1,1 +1,1 @@
-rm *.o *.hi Main
+rm *.o *.hi Main Benchmark
