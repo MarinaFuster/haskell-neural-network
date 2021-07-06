@@ -25,7 +25,7 @@ import Numeric.Morpheus.Activation (
 -- | Neural Network data types
 
 data Activation = Relu | Tanh | Sigmoid
-data Error = MSE
+data Error = MSE | CrossEntropy
 
 type Weights = Matrix Double    -- layer weights
 type Biases = Matrix Double     -- layer biases
