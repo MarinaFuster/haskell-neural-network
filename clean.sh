@@ -1,1 +1,1 @@
-rm *.o *.hi Main Benchmark
+rm *.o *.hi Main Measure
