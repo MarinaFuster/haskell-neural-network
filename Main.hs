@@ -73,8 +73,20 @@ adamVsGradientDescent = do
     print $ takeRows 10 (feedforward gradientNet samples)
     print $ takeRows 10 (feedforward adamNet samples)
 
+spiralExperiment = do
+    -- provision of dataset
 
-main = adamVsGradientDescent
+    samples <- loadMatrix "datasets/spiral_x.dat"  
+    targets <- loadMatrix "datasets/spiral_y.dat"
 
--- | TODO: figure out a way to compute time properly and compare it
--- | to python way of doing it ??
+    net <- buildNetwork 2 [5, 10, 15, 1] [Relu, Relu, Relu, Sigmoid]
+
+    let optimizer = GradientDescent 0.001
+        errFunc = MSE                          
+        epochs = 100000
+        
+        trainedNet = train net errFunc (samples, targets) epochs optimizer
+
+    print $ takeRows 10 (feedforward trainedNet samples)
+
+main = spiralExperiment
