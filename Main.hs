@@ -1,7 +1,7 @@
 import Numeric.LinearAlgebra ( loadMatrix, takeRows )
 import Text.Printf ( printf )
 import NeuralNetwork ( Activation(..), feedforward )
-import Optimization ( Optimizer(..), train )
+import Optimization ( AParameters (..), Optimizer(..), train )
 import Dynamic ( buildNetwork )
 import Evaluation ( hits, classify )
 
@@ -34,8 +34,38 @@ experimentTemplate = do
     print $ takeRows 10 (feedforward trainedNet samples)
     print $ takeRows 10 (classify trainedNet samples)
 
+adamVsGradientDescent :: IO ()
+adamVsGradientDescent = do
 
-main = experimentTemplate
+    -- provision of dataset
+
+    samples <- loadMatrix "datasets/iris_x.dat"  
+    targets <- loadMatrix "datasets/iris_y.dat"  
+
+    -- provision of initial net
+
+    let inputFeatures = 4                        
+        layers = [128, 3]                        
+        activations = [Relu, Sigmoid]            
+    
+    net <- buildNetwork inputFeatures layers activations
+
+    -- provision of train parameters
+
+    let learningRate = 0.001                     
+        gdOptimizer = GradientDescent learningRate
+        adamParams = AParameters { _beta1 = 0.9, _beta2 = 0.999, _epsilon = 1e-8, _lr = 0.001 }
+        adamOptimizer = Adam adamParams
+        epochs = 800                          
+        
+        gradientNet = train net gdOptimizer (samples, targets) epochs
+        adamNet = train net adamOptimizer (samples, targets) epochs
+
+    print $ takeRows 10 (feedforward gradientNet samples)
+    print $ takeRows 10 (feedforward adamNet samples)    
+
+
+main = adamVsGradientDescent
 
 -- | TODO: figure out a way to compute time properly and compare it
 -- | to python way of doing it ??
