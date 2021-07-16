@@ -89,4 +89,4 @@ spiralExperiment = do
 
     print $ takeRows 10 (feedforward trainedNet samples)
 
-main = spiralExperiment
+main = experimentTemplate

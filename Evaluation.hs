@@ -11,10 +11,10 @@ binaryClassify net samples = cmap (\a -> if a < 0.5 then 0 else 1) (feedforward 
 -- | Returns how many were hits and how many were errors
 
 binaryHits :: NeuralNetwork -> (Matrix Double, Matrix Double) -> (Double, Double)
-binaryHits net (samples, targets) =
-   let n = fromIntegral $ rows targets
-    in let errors = sumElements $ abs (targets - (net `binaryClassify` samples))
-     in (n - errors, errors)
+binaryHits net (samples, targets) = (n - errors, errors)
+  where 
+    n = fromIntegral $ rows targets
+    errors = sumElements $ abs (targets - (net `binaryClassify` samples))
 
 -- | Returns accuracy for binary classification problems
 
